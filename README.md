@@ -1,6 +1,6 @@
 # E-Commerce - Front-End
 
-O projeto de aplicação front-end de E-Commerce, desiner responsiva com uso tecnologias como tailwindCss e algumas funcionalidades exenciais, A tecnologias base de sua construção foi React, vite, Typescript e Zustand.
+O projeto de aplicação front-end de E-Commerce, com design responsivo utilizando tecnologias como Tailwind CSS e algumas funcionalidades essenciais. As tecnologias base de sua construção foram React, Vite, TypeScript e Zustand.
 
 ## Visão Geral
 
