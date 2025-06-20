@@ -1,0 +1,103 @@
+import { create } from "zustand";
+import type { AuthStore } from "../../types";
+import { persist } from "zustand/middleware";
+import { useCartStore } from "../Cart";
+import { apiClient } from "../../api/apiClient";
+import { loginFromAPI } from "../../api/api.service";
+
+export const useAuthStore = create<AuthStore>()(
+    persist(
+        (set) => ({
+            state: {
+                isAuthenticated: false,
+                user: {
+                    name: '',
+                    email: '',
+                    id: '',
+                },
+                accessToken: null,
+                error: null,
+                isLoading: false,
+            },
+            actions: {
+                login: async (email: string, password: string) => {
+                    set((prev) => ({
+                        state: {
+                            ...prev.state,
+                            isLoading: true,
+                        },
+                        actions: prev.actions
+                    }));
+                    try {
+                        const response = await loginFromAPI(email, password);
+                        const { accessToken, id, name } = response;
+                        set((prev) => ({
+                            state: {
+                                ...prev.state,
+                                isAuthenticated: true,
+                                isLoading: true,
+                                accessToken: accessToken,
+                                user: { email, name: name, id: id }
+                            },
+                            actions: prev.actions
+                        }));
+
+                    } catch (error: any) {
+
+                        setTimeout(() => {
+                            set((prev) => ({
+                                state: {
+                                    ...prev.state,
+                                    error: error.message,
+                                    isLoading: false,
+                                },
+                                actions: prev.actions
+                            }));
+                        }, 1000); // Simulate loading delay
+                    }
+                },
+                register: async (name: string, email: string, password: string, language: string) => {
+                    const response = await apiClient('/user', { method: 'POST', body: JSON.stringify({ name, email, password, language }) })
+                    const { user, accessToken } = response;
+                    set((prev) => ({
+                        state: {
+                            ...prev.state,
+                            isAuthenticated: true,
+                            user: user,
+                            accessToken: accessToken,
+                        },
+                        actions: prev.actions
+                    }));
+                },
+                logout: () => {
+                    useCartStore.getState().actions.clearCart();
+                    set((prev) => ({
+                        state: {
+                            ...prev.state,
+                            isAuthenticated: false,
+                            user: {
+                                name: '',
+                                email: '',
+                                id: '',
+                            },
+                            accessToken: null
+                        },
+                        actions: prev.actions
+                    }));
+                }
+            }
+        }),
+        {
+            name: 'auth-storage',
+            // FIX: Only persist the data, not the functions.
+            partialize: ((prev) => (
+                {
+                    state: {
+                        ...prev.state,
+                        isLoading: false
+                    },
+                }
+            ))
+        },
+    )
+);
