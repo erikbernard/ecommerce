@@ -2,8 +2,8 @@ import { create } from "zustand";
 import type { AuthStore } from "../../types";
 import { persist } from "zustand/middleware";
 import { useCartStore } from "../Cart";
-import { apiClient } from "../../api/apiClient";
-import { loginFromAPI } from "../../api/api.service";
+import { useModalStore } from "../Modal";
+import { loginFromAPI, registerFromAPI } from "../../api/api.service";
 
 export const useAuthStore = create<AuthStore>()(
     persist(
@@ -57,17 +57,12 @@ export const useAuthStore = create<AuthStore>()(
                     }
                 },
                 register: async (name: string, email: string, password: string, language: string) => {
-                    const response = await apiClient('/user', { method: 'POST', body: JSON.stringify({ name, email, password, language }) })
-                    const { user, accessToken } = response;
-                    set((prev) => ({
-                        state: {
-                            ...prev.state,
-                            isAuthenticated: true,
-                            user: user,
-                            accessToken: accessToken,
-                        },
-                        actions: prev.actions
-                    }));
+                    try {
+                        await registerFromAPI(name, email, password);
+                        useModalStore.getState().actions.showModal(`Usuario registrado ${email}`, 'success');
+                    } catch (error) {
+                        useModalStore.getState().actions.showModal(`falhar ao registrar ${email}`, 'error');
+                    }
                 },
                 logout: () => {
                     useCartStore.getState().actions.clearCart();
