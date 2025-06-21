@@ -15,7 +15,7 @@ export const apiClient = async (url: string, options: RequestInit = {}): Promise
     // Em uma aplicação real, aqui seria a URL base da sua API
     // Ex: const response = await fetch(`https://api.meusite.com${url}`, {
     const baseUrl = process.env.BASE_URL;
-    const response = await fetch(baseUrl+url, {
+    const response = await fetch(baseUrl + url, {
         ...options,
         headers,
     });

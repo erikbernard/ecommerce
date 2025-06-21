@@ -1,4 +1,4 @@
-import type {  Product, ProductFilters } from "../types";
+import type { Product, ProductFilters } from "../types";
 import { api } from "./axios.config";
 
 export function buildQueryString(filters: ProductFilters): string {
@@ -58,6 +58,26 @@ export const loginFromAPI = async (email: string, password: string): Promise<Fet
         }
     }
 }
+export const registerFromAPI = async (name: string, email: string, password: string): Promise<any> => {
+    try {
+        let response = await api.post("/user", {
+            name,
+            email,
+            password
+        });
+        return response.data;
+
+    } catch (error: any) {
+        // Tratar erros específicos da API aqui
+        if (error.response?.status === 400) {
+            throw new Error('Credenciais inválidas');
+        } else if (error.response?.status === 500) {
+            throw new Error('Erro interno do servidor');
+        } else {
+            throw new Error('Erro ao registrar o novo usuario, Tente novamente.');
+        }
+    }
+}
 export type Order = {
     userId: string,
     total: number,
@@ -72,7 +92,7 @@ type productItem = {
     price: number,
 }
 export const processOrderFromAPI = async (order: Order): Promise<any> => {
-    try { 
+    try {
         let response = await api.post("/orders", order);
         return { ...response };
     } catch (error: any) {
@@ -155,7 +175,7 @@ export const listReviewAPI = async (): Promise<ReviewAPIResponse[]> => {
 
     try {
         const response = await api.get("/reviews");
-        return response.data as ReviewAPIResponse[]; 
+        return response.data as ReviewAPIResponse[];
     }
     catch (error: any) {
         // Tratar erros específicos da API aqui
@@ -166,7 +186,6 @@ export const listReviewAPI = async (): Promise<ReviewAPIResponse[]> => {
         }
     }
 }
-
 // Mock dada para simular a resposta da API
 // Simula 100 produtos com dados aleatórios
 // const mockProducts: Product[] = Array.from({ length: 100 }, (_, i) => ({

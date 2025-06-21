@@ -44,7 +44,7 @@ export const RegisterPage = () => {
             setIsLoading(true);
             await register(name, email, password, "pt-BR");
             setIsLoading(false);
-            navigate("/", { replace: true });
+            navigate("/login", { replace: true });
         }
     }
 

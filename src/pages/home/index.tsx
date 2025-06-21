@@ -6,7 +6,6 @@ import { FavoritesPanel } from "../../components/FavoritesPanel";
 import { PurchaseHistory } from "../../components/PurchaseHistory";
 import { ProductDetailModal } from "../../components/ProductDetailModal";
 import { CheckoutModal } from "../../components/CheckoutModal";
-import { Modal } from "../../components/Modal";
 import { useInteractionStore } from "../../store/Interaction";
 import { useCartStore } from "../../store/Cart";
 import { usePurchaseStore } from "../../store/Purchase";
@@ -68,7 +67,6 @@ export const HomePage = () => {
             <PurchaseHistory />
             <ProductDetailModal />
             <CheckoutModal />
-            <Modal />
         </div>
     );
 };
